@@ -1,6 +1,6 @@
 # MultiProxySync
 
-**[English](https://github.com/User-Time/MultiProxySync) | 
+[**English**](https://github.com/User-Time/MultiProxySync) | [**Chinese**](https://github.com/User-Time/MultiProxySync/blob/master/Readme_zhCN.md)
 
 ---
 
