@@ -1,12 +1,8 @@
----
-
 # MultiProxySync
 
 **[English](https://github.com/User-Time/MultiProxySync) | 
 
 ---
-
-## MultiProxySync
 
 **MultiProxySync** is a high-performance Velocity plugin designed for distributed proxy networks. It synchronizes online player counts and player lists across multiple Velocity proxies using Redis, ensuring consistent data representation for your network.
 
