@@ -6,7 +6,7 @@
 
 **MultiProxySync** is a high-performance Velocity plugin designed for distributed proxy networks. It synchronizes online player counts and player lists across multiple Velocity proxies using Redis, ensuring consistent data representation for your network.
 
-###🌟 Key Features
+### 🌟 Key Features
 
 * **Global Sync**: Unified player count across all proxy nodes.
 * **Self-Healing**: Automatic cleanup of data from crashed nodes using Redis TTL.
