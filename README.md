@@ -39,13 +39,5 @@ redis:
 
 ```
 
----
-
-## 🔗 About the Author
-
-* **Author**: Time
-* **Website**: [www.time-blog.top](https://www.time-blog.top)
-* **GitHub**: [MultiProxySync Repository](https://www.google.com/search?q=https://github.com/%E4%BD%A0%E7%9A%84%E7%94%A8%E6%88%B7%E5%90%8D/MultiProxySync)
-
 
 ---
