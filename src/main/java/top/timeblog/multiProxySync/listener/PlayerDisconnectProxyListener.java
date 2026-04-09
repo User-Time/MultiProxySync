@@ -19,6 +19,6 @@ public class PlayerDisconnectProxyListener {
     public void onLeave(DisconnectEvent event) {
         Player player = event.getPlayer();
         plugin.getLogger().info("{} left the server.", player.getUsername());
-        core.playerLeave(event.getPlayer());
+        core.playerLeave(event.getPlayer().getUniqueId());
     }
 }

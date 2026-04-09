@@ -8,6 +8,7 @@ import top.timeblog.multiProxySync.MultiProxySync;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.UUID;
 
 public class RedisManager {
     private static JedisPool pool;
@@ -21,7 +22,7 @@ public class RedisManager {
                 String tmp = getPlayerListKey() + ":tmp";
                 rs.del(tmp);
                 String[] players = playerList.stream()
-                        .map(Player::getUsername)
+                        .map(player -> player.getUniqueId().toString())
                         .toArray(String[]::new);
                 rs.sadd(tmp, players);
                 rs.rename(tmp, getPlayerListKey());
@@ -49,16 +50,16 @@ public class RedisManager {
             rs.set("playerCount", "0", SetParams.setParams().nx());
         }
     }
-    public long addPlayer(Player player) {
+    public long addPlayer(UUID uuid) {
         try (Jedis rs = get()){
-            long status = rs.sadd(getPlayerListKey(), player.getUsername());
+            long status = rs.sadd(getPlayerListKey(), String.valueOf(uuid));
             rs.expire(getPlayerListKey(), 30);
             return status;
         }
     }
-    public long remPlayer(Player player) {
+    public long remPlayer(UUID uuid) {
         try (Jedis rs = get()){
-            long status = rs.srem(getPlayerListKey(), player.getUsername());
+            long status = rs.srem(getPlayerListKey(), String.valueOf(uuid));
             rs.expire(getPlayerListKey(), 30);
             return status;
         }

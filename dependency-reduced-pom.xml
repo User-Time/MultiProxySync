@@ -4,7 +4,7 @@
   <groupId>top.time-blog</groupId>
   <artifactId>MultiProxySync</artifactId>
   <name>MultiProxySync</name>
-  <version>1.0.0</version>
+  <version>1.3.0</version>
   <build>
     <defaultGoal>clean package</defaultGoal>
     <resources>

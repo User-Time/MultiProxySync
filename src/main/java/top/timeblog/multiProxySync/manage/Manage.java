@@ -5,6 +5,7 @@ import top.timeblog.multiProxySync.MultiProxySync;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import static top.timeblog.multiProxySync.MultiProxySync.playerCount;
 
@@ -27,7 +28,7 @@ public class Manage {
                     try {
                         updatePlayerList();
                         // 每次更新服务器心跳，TTL = 30秒
-                        getAllServerPlayer();
+                        getAllServerPlayers();
                         playerCount = getAllServerPlayerCount();
                         redis.setPlayerCount(playerCount);
 
@@ -43,22 +44,20 @@ public class Manage {
         return plugin.getServer().getAllPlayers();
     }
 
-    public Object[] getAllServerPlayer(){
-        Set<String> Servers = redis.getAllServers();
-        Set<String> AllPlayers = new HashSet<>();
-        Servers.forEach(serverName->{
-            AllPlayers.addAll(redis.getServerPlayers(serverName));
-        });
-        return AllPlayers.toArray();
+    public Set<String> getAllServerPlayers(){
+        Set<String> servers = redis.getAllServers();
+        Set<String> allPlayers = new HashSet<>();
+        servers.forEach(serverName->allPlayers.addAll(redis.getServerPlayers(serverName)));
+        return allPlayers;
     }
 
     public int getAllServerPlayerCount(){
-        return getAllServerPlayer().length;
+        return getAllServerPlayers().size();
     }
 
-    public void playerJoin(Player player) {
+    public void playerJoin(UUID uuid) {
         try {
-            long status = redis.addPlayer(player);
+            long status = redis.addPlayer(uuid);
             if (status == 1) {
                 plugin.getLogger().debug("Player count +1");
 
@@ -75,9 +74,9 @@ public class Manage {
             plugin.getLogger().error("PlayerJoin Server Redis Exception: ", e);
         }
     }
-    public void playerLeave(Player player) {
+    public void playerLeave(UUID uuid) {
         try {
-            long status = redis.remPlayer(player);
+            long status = redis.remPlayer(uuid);
             if (status == 1) {
                 plugin.getLogger().debug("Player count -1");
 

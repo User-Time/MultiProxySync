@@ -9,10 +9,12 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 
 import org.slf4j.Logger;
+//import top.timeblog.multiProxySync.api.MultiProxySyncAPI;
 import top.timeblog.multiProxySync.config.ConfigManager;
 import top.timeblog.multiProxySync.listener.PingListener;
 import top.timeblog.multiProxySync.listener.PlayerConnectProxyListener;
 import top.timeblog.multiProxySync.listener.PlayerDisconnectProxyListener;
+//import top.timeblog.multiProxySync.manage.MultiProxySyncAPIImpl;
 import top.timeblog.multiProxySync.manage.RedisManager;
 import top.timeblog.multiProxySync.manage.Manage;
 
@@ -25,6 +27,9 @@ public class MultiProxySync {
     public static int playerCount = 0;
     private Manage core;
     private final Path dataDirectory;
+//    private MultiProxySyncAPI api;
+
+
 
     @Inject
     public MultiProxySync(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
@@ -52,7 +57,10 @@ public class MultiProxySync {
         return logger;
     }
     public static String ServerName;
-
+//    @Subscribe
+//    public void onInit(ProxyInitializeEvent event) {
+//        this.api = new MultiProxySyncAPIImpl(redis);
+//    }
 
 
     @Subscribe
