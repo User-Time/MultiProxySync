@@ -14,14 +14,14 @@ public interface MultiProxySyncAPI {
     /**
      * Retrieves all online player UUID strings across all proxies.
      *
-     * @return a set of player usernames
+     * @return a set of player UUID strings
      */
     Set<String> getAllPlayers();
 
     /**
      * Retrieves online player UUID strings grouped by proxy.
      *
-     * @return a mapping of proxy name to the set of player usernames connected to that proxy
+     * @return a mapping of proxy name to the set of player UUID strings connected to that proxy
      */
     Map<String, Set<String>> getPlayersByProxy();
 
