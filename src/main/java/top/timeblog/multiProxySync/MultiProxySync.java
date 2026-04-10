@@ -104,6 +104,7 @@ public class MultiProxySync {
     public void onProxyShutdown(ProxyShutdownEvent event) {
         try (redis.clients.jedis.Jedis rs = redis.get()) {
             rs.srem("serverList", ServerName);
+            rs.del(ServerName + ":PlayerList");
         } catch (Exception e) {
             logger.warn("Redis cleanup failed.");
         }
