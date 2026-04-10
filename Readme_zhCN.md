@@ -48,7 +48,7 @@ redis:
 | `plugin.enabled` | 是否启用插件。 |
 | `redis.host` | Redis 服务器地址。 |
 | `redis.port` | Redis 服务器端口。 |
-| `redis.password` | Redis 认证密码，若未设置密码可留空。 |
+| `redis.password` | Redis 认证密码。 |
 
 ---
 
