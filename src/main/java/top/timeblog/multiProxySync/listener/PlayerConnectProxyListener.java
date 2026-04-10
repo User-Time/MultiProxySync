@@ -20,5 +20,6 @@ public class PlayerConnectProxyListener {
         Player player = event.getPlayer();
         plugin.getLogger().info("{} joined the server.", player.getUsername());
         core.playerJoin(event.getPlayer().getUniqueId());
+
     }
 }
