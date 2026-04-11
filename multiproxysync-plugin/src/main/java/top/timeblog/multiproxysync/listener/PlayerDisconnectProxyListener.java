@@ -1,9 +1,9 @@
-package top.timeblog.multiProxySync.listener;
+package top.timeblog.multiproxysync.listener;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.proxy.Player;
-import top.timeblog.multiProxySync.MultiProxySync;
-import top.timeblog.multiProxySync.manage.Manage;
+import top.timeblog.multiproxysync.MultiProxySync;
+import top.timeblog.multiproxysync.manage.Manage;
 
 
 public class PlayerDisconnectProxyListener {

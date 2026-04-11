@@ -1,4 +1,4 @@
-package top.timeblog.multiProxySync.api;
+package top.timeblog.multiproxysync.api;
 
 import java.util.Map;
 import java.util.Set;

@@ -1,14 +1,14 @@
-package top.timeblog.multiProxySync.manage;
+package top.timeblog.multiproxysync.manage;
 
 import com.velocitypowered.api.proxy.Player;
-import top.timeblog.multiProxySync.MultiProxySync;
+import top.timeblog.multiproxysync.MultiProxySync;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static top.timeblog.multiProxySync.MultiProxySync.playerCount;
+import static top.timeblog.multiproxysync.MultiProxySync.playerCount;
 
 public class Manage {
 

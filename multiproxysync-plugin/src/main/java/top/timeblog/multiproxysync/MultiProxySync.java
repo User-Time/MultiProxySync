@@ -1,4 +1,4 @@
-package top.timeblog.multiProxySync;
+package top.timeblog.multiproxysync;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -8,21 +8,22 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import org.slf4j.Logger;
-import top.timeblog.multiProxySync.api.MultiProxySyncAPI;
-import top.timeblog.multiProxySync.api.impl.MultiProxySyncAPIImpl;
-import top.timeblog.multiProxySync.config.ConfigManager;
-import top.timeblog.multiProxySync.listener.PingListener;
-import top.timeblog.multiProxySync.listener.PlayerConnectProxyListener;
-import top.timeblog.multiProxySync.listener.PlayerDisconnectProxyListener;
-import top.timeblog.multiProxySync.manage.Manage;
-import top.timeblog.multiProxySync.manage.RedisManager;
+import top.timeblog.multiproxysync.api.MultiProxySyncAPI;
+import top.timeblog.multiproxysync.impl.MultiProxySyncAPIImpl;
+import top.timeblog.multiproxysync.config.ConfigManager;
+import top.timeblog.multiproxysync.listener.PingListener;
+import top.timeblog.multiproxysync.listener.PlayerConnectProxyListener;
+import top.timeblog.multiproxysync.listener.PlayerDisconnectProxyListener;
+import top.timeblog.multiproxysync.manage.Manage;
+import top.timeblog.multiproxysync.manage.RedisManager;
+import top.timeblog.multiproxysync.api.MultiProxySyncProvider;
 
 import java.nio.file.Path;
 
 @Plugin(
         id = "multiproxysync",
         name = "MultiProxySync",
-        version = "1.0.0",
+        version = "2.0.0",
         url = "https://www.time-blog.top",
         authors = {"Time"}
 )
@@ -71,7 +72,6 @@ public class MultiProxySync {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         logger.info("Starting MultiProxySync initialization...");
-
         config = new ConfigManager(dataDirectory, "config.yml");
         config.load();
 
@@ -84,7 +84,7 @@ public class MultiProxySync {
         if (PluginStatus.equalsIgnoreCase("true")) {
             redis.connect(host, port, password);
             redis.init();
-
+            MultiProxySyncProvider.register(this.api);
             ready = true;
             logger.info("MultiProxySync API initialized.");
 
@@ -102,6 +102,7 @@ public class MultiProxySync {
 
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
+        MultiProxySyncProvider.unregister();
         try (redis.clients.jedis.Jedis rs = redis.get()) {
             rs.srem("serverList", ServerName);
             rs.del(ServerName + ":PlayerList");

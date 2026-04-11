@@ -1,7 +1,7 @@
-package top.timeblog.multiProxySync.listener;
+package top.timeblog.multiproxysync.listener;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
-import top.timeblog.multiProxySync.MultiProxySync;
+import top.timeblog.multiproxysync.MultiProxySync;
 
 
 public class PingListener {

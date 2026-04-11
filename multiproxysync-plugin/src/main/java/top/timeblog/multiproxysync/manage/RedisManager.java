@@ -1,10 +1,10 @@
-package top.timeblog.multiProxySync.manage;
+package top.timeblog.multiproxysync.manage;
 import com.velocitypowered.api.proxy.Player;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.params.SetParams;
-import top.timeblog.multiProxySync.MultiProxySync;
+import top.timeblog.multiproxysync.MultiProxySync;
 
 import java.util.Collection;
 import java.util.Set;
