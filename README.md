@@ -143,3 +143,8 @@ If the returned value is not `null`, the API is available and ready to use.
 If you encounter any issues or have ideas for improvements, feel free to open an issue:
 
 👉 https://github.com/User-Time/MultiProxySync/issues
+
+
+### 📝 License
+
+This project is licensed under the **Apache License 2.0**.
