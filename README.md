@@ -1,4 +1,11 @@
 # MultiProxySync
+![GitHub release](https://img.shields.io/github/v/release/User-Time/MultiProxySync)
+![Maven Central](https://img.shields.io/maven-central/v/top.time-blog/multiproxysync-api)
+![GitHub downloads](https://img.shields.io/github/downloads/User-Time/MultiProxySync/total)
+![License](https://img.shields.io/github/license/User-Time/MultiProxySync)
+![Velocity](https://img.shields.io/badge/Velocity-3.x-blue)
+![Redis](https://img.shields.io/badge/Redis-required-red)
+![Java](https://img.shields.io/badge/Java-21-orange)
 
 [**English**](https://github.com/User-Time/MultiProxySync) | [**中文**](https://github.com/User-Time/MultiProxySync/blob/master/Readme_zhCN.md)
 
