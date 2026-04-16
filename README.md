@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/banner.png" alt="MultiProxySync Banner" width="85%"/>
+  <img src="./assets/banner.png" alt="MultiProxySync Banner"/>
 </p>
 
 # MultiProxySync
