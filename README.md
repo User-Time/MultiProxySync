@@ -1,4 +1,9 @@
+<p align="center">
+  <img src="./assets/banner.png" alt="MultiProxySync Banner" width="85%"/>
+</p>
+
 # MultiProxySync
+
 ![GitHub release](https://img.shields.io/github/v/release/User-Time/MultiProxySync)
 ![Maven Central](https://img.shields.io/maven-central/v/top.time-blog/multiproxysync-api)
 ![GitHub downloads](https://img.shields.io/github/downloads/User-Time/MultiProxySync/total)
