@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="./assets/banner.png" alt="MultiProxySync Banner"/>
-</p>
+
 
 # MultiProxySync
 
@@ -13,6 +11,10 @@
 ![Java](https://img.shields.io/badge/Java-21-orange)
 
 [**English**](https://github.com/User-Time/MultiProxySync) | [**中文**](https://github.com/User-Time/MultiProxySync/blob/master/Readme_zhCN.md)
+
+<p align="center">
+  <img src="./assets/banner.png" alt="MultiProxySync Banner" width="85%"/>
+</p>
 
 ---
 
