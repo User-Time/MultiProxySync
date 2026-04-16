@@ -13,7 +13,7 @@
 [**English**](https://github.com/User-Time/MultiProxySync) | [**中文**](https://github.com/User-Time/MultiProxySync/blob/master/Readme_zhCN.md)
 
 <p align="center">
-  <img src="./assets/banner.png" alt="MultiProxySync Banner" width="85%"/>
+  <img src="./assets/banner.png" alt="MultiProxySync Banner"/>
 </p>
 
 ---
