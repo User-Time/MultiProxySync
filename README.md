@@ -2,13 +2,14 @@
 
 # MultiProxySync
 
-![GitHub release](https://img.shields.io/github/v/release/User-Time/MultiProxySync)
-![Maven Central](https://img.shields.io/maven-central/v/top.time-blog/multiproxysync-api)
-![GitHub downloads](https://img.shields.io/github/downloads/User-Time/MultiProxySync/total)
-![License](https://img.shields.io/github/license/User-Time/MultiProxySync)
-![Velocity](https://img.shields.io/badge/Velocity-3.x-blue)
-![Redis](https://img.shields.io/badge/Redis-required-red)
-![Java](https://img.shields.io/badge/Java-21-orange)
+![GitHub release](https://img.shields.io/github/v/release/User-Time/MultiProxySync?logo=github)
+![Maven Central](https://img.shields.io/maven-central/v/top.time-blog/multiproxysync-api?logo=maven-central)
+![License](https://img.shields.io/github/license/User-Time/MultiProxySync?logo=license)
+![Velocity](https://img.shields.io/badge/Velocity-3.X-blue?logo=Velocity)
+![Redis](https://img.shields.io/badge/Redis-required-red?logo=redis)
+[![Modrinth](https://img.shields.io/badge/Modrinth-MultiProxySync-00AF5C?style=flat-square&logo=modrinth)](https://modrinth.com/plugin/multiproxysync)
+[![Modrinth](https://img.shields.io/badge/MineBBS-MultiProxySync-8ab1ec?style=flat-square&logo=minebbs)](https://www.minebbs.com/resources/multiproxysync-velocity.15712/)
+
 
 [**English**](https://github.com/User-Time/MultiProxySync) | [**中文**](https://github.com/User-Time/MultiProxySync/blob/master/Readme_zhCN.md)
 
