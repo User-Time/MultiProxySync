@@ -1,50 +1,113 @@
+
+
 # MultiProxySync
 
-[**English**](https://github.com/User-Time/MultiProxySync) | [**Chinese**](https://github.com/User-Time/MultiProxySync/blob/master/Readme_zhCN.md)
+![GitHub release](https://img.shields.io/github/v/release/User-Time/MultiProxySync?logo=github)
+![Maven Central](https://img.shields.io/maven-central/v/top.time-blog/multiproxysync-api?logo=maven-central)
+![License](https://img.shields.io/github/license/User-Time/MultiProxySync?logo=license)
+![Velocity](https://img.shields.io/badge/Velocity-3.X-blue?logo=Velocity)
+![Redis](https://img.shields.io/badge/Redis-required-red?logo=redis)
+[![Modrinth](https://img.shields.io/badge/Modrinth-MultiProxySync-00AF5C?style=flat-square&logo=modrinth)](https://modrinth.com/plugin/multiproxysync)
+[![Modrinth](https://img.shields.io/badge/MineBBS-MultiProxySync-8ab1ec?style=flat-square&logo=minebbs)](https://www.minebbs.com/resources/multiproxysync-velocity.15712/)
+
+
+[**English**](https://github.com/User-Time/MultiProxySync) | [**中文**](https://github.com/User-Time/MultiProxySync/blob/master/Readme_zhCN.md)
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/User-Time/MultiProxySync/refs/heads/master/assets/banner2.png" alt="MultiProxySync Banner"/>
+</p>
 
 ---
 
-**MultiProxySync** is a high-performance Velocity plugin designed for distributed proxy networks. It synchronizes online player counts and player lists across multiple Velocity proxies using Redis, ensuring consistent data representation for your network.
+**MultiProxySync** is a Velocity plugin for distributed proxy networks.  
+It uses **Redis** to synchronize player counts and player lists across multiple Velocity proxies, so your network can present a consistent global player count and shared player data across all entry points.
 
-### 🌟 Key Features
+---
 
-* **Global Sync**: Unified player count across all proxy nodes.
-* **Self-Healing**: Automatic cleanup of data from crashed nodes using Redis TTL.
-* **High Performance**: Optimized with Redis Sets (O(1) complexity).
-* **Zero-Config Ping**: Automatically hooks into `ProxyPingEvent` to show accurate total counts.
-* **Public API**: Exposes synchronized player data for use by other plugins.
+## ✨ Features
+
+- **Global synchronization**  
+  Synchronizes player counts and player lists across multiple Velocity proxies.
+
+- **Accurate player statistics**  
+  Keeps the displayed online count consistent across the network.
+
+- **Self-healing cleanup**  
+  Removes stale proxy data automatically when a node crashes or goes offline unexpectedly.
+
+- **Redis-powered**  
+  Uses Redis for fast and lightweight shared state synchronization.
+
+- **Public API**  
+  Exposes synchronized proxy and player data for use in other plugins.
+
+- **Maven Central distribution**  
+  The API can be added through Maven Central without manually installing local JAR files.
+
+---
+
+## 📦 Requirements
+
+- **Velocity** proxy server
+- **Redis** database
 
 ---
 
 ## 🛠️ Installation
 
-1. Ensure you have a **Redis** server running.
-2. Place `MultiProxySync.jar` into the `plugins` folder of all your Velocity proxies.
-3. Start your proxies to generate the `config.yml`.
-4. Configure your Redis credentials in `plugins/multiproxysync/config.yml`.
-5. Restart all instances.
+1. Make sure a **Redis** server is available.
+2. Download `multiproxysync-plugin-2.0.0.jar`.
+3. Place it in the `plugins` folder of all Velocity proxy instances.
+4. Start each proxy once to generate the configuration file.
+5. Edit the generated `config.yml`.
+6. Restart all proxy instances.
 
 ---
 
-## 📄 Configuration Example
+## 📄 Configuration
 
 ```yaml
 plugin:
-  serverName: Proxy-01  # Unique identifier for each node
+  serverName: Proxy-01
   enabled: true
+
 redis:
   host: 127.0.0.1
   port: 6379
   password: YourPassword
 ```
 
+### Notes
+
+- `serverName` must be unique for each proxy node.
+- `enabled` controls whether the plugin initializes and registers its API.
+- All proxy nodes should connect to the same Redis instance.
+
 ---
 
-## 🔌 API
+## 📦 API
 
-MultiProxySync also provides a public API for other Velocity plugins.
+<details>
+<summary>Click to expand</summary>
 
-This allows external plugins to access synchronized player data across all connected proxies.
+### Maven
+
+```xml
+<dependency>
+    <groupId>top.time-blog</groupId>
+    <artifactId>multiproxysync-api</artifactId>
+    <version>2.0.0</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+### Gradle
+
+```kotlin
+dependencies {
+    compileOnly("top.time-blog:multiproxysync-api:2.0.0")
+}
+```
 
 ### Available Methods
 
@@ -55,54 +118,49 @@ Map<String, Set<String>> getPlayersByProxy();
 int getAllPlayerCount();
 Map<String, Integer> getPlayerCountByProxy();
 ```
-### Method Description
-
-* `getProxies()`  
-  Returns all currently known proxy names.
-
-* `getAllPlayers()`  
-  Returns a set of player UUID strings across every proxy.
-
-* `getAllPlayerCount()`  
-  Returns the total synchronized online player count across the network.
-
-* `getPlayersByProxy()`  
-  Returns online player UUID strings grouped by proxy.
-
-* `getPlayerCountByProxy()`  
-  Returns the online player count grouped by proxy.
 
 ### Usage Example
 
 ```java
-import top.timeblog.multiProxySync.MultiProxySync;
-import top.timeblog.multiProxySync.api.MultiProxySyncAPI;
+import top.timeblog.multiproxysync.api.MultiProxySyncAPI;
+import top.timeblog.multiproxysync.api.MultiProxySyncProvider;
 
-MultiProxySync plugin = (MultiProxySync) proxyServer.getPluginManager()
-        .getPlugin("multiproxysync")
-        .flatMap(container -> container.getInstance().map(instance -> (MultiProxySync) instance))
-        .orElse(null);
-
-if (plugin != null && plugin.isReady()) {
-    MultiProxySyncAPI api = plugin.getApi();
-
-    int totalPlayers = api.getAllPlayerCount();
-    Set<String> allPlayers = api.getAllPlayers();
-    Map<String, Integer> countByProxy = api.getPlayerCountByProxy();
-    Map<String, Set<String>> playersByProxy = api.getPlayersByProxy();
-
-    System.out.println("Total players: " + totalPlayers);
-    System.out.println("All players: " + allPlayers);
-    System.out.println("Count by proxy: " + countByProxy);
-    System.out.println("Players by proxy: " + playersByProxy);
+MultiProxySyncAPI api = MultiProxySyncProvider.getOrNull();
+if (api == null) {
+    System.out.println("MultiProxySync API is not available yet.");
+    return;
 }
+
+int totalPlayers = api.getAllPlayerCount();
+Set<String> allPlayers = api.getAllPlayers();
+Map<String, Integer> countByProxy = api.getPlayerCountByProxy();
+Map<String, Set<String>> playersByProxy = api.getPlayersByProxy();
+
+System.out.println("Total players: " + totalPlayers);
+System.out.println("All players: " + allPlayers);
+System.out.println("Count by proxy: " + countByProxy);
+System.out.println("Players by proxy: " + playersByProxy);
 ```
 
-### Notes
+### API Notes
 
-* The API is read-only.
-* Redis connection management remains internal to MultiProxySync.
-* Returned player identifiers are UUID strings.
-* The API becomes available after the plugin has finished initialization.
+- The API is read-only.
+- Redis connection management remains internal to MultiProxySync.
+- Returned player identifiers are UUID strings.
+- The API becomes available after plugin initialization has completed.
+
+</details>
 
 ---
+
+## 💡 Feedback & Support
+
+If you encounter any issues or have ideas for improvements, feel free to open an issue:
+
+👉 https://github.com/User-Time/MultiProxySync/issues
+
+---
+
+## 📝 License
+
+This project is licensed under the **Apache License 2.0**.
