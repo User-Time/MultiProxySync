@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static top.timeblog.multiproxysync.MultiProxySync.playerCount;
 
 public class Manage {
 
@@ -33,19 +32,26 @@ public class Manage {
                     try {
                         updatePlayerList();
 
-                        // 每次更新服务器心跳，TTL = 30秒
-                        getAllServerPlayers();
-                        playerCount = getAllServerPlayerCount();
-                        redis.setPlayerCount(playerCount);
+                        // 每次更新服务器心跳，TTL = 30s
+                        syncPlayerCount();
 
                     } catch (Exception e) {
                         plugin.getLogger().warn("Failed to update server", e);
                     }
                 })
-                .repeat(10, java.util.concurrent.TimeUnit.SECONDS) // 每10秒执行一次
+                .repeat(10, java.util.concurrent.TimeUnit.SECONDS) // 每10s执行一次
                 .schedule();
     }
+    public synchronized void syncPlayerCount() {
+        int count = getAllServerPlayerCount();
+        MultiProxySync.setPlayerCount(count);
+        redis.setPlayerCount(count);
+    }
 
+    public synchronized void refreshLocalPlayerCount() {
+        int count = getAllServerPlayerCount();
+        MultiProxySync.setPlayerCount(count);
+    }
     public Collection<Player> getAllPlayer() {
         return plugin.getServer().getAllPlayers();
     }
@@ -70,13 +76,9 @@ public class Manage {
             long status = redis.addPlayer(uuid);
 
             if (status == 1) {
-                plugin.getLogger().debug("Player count +1");
-
-                playerCount += 1;
-                playerCount = getAllServerPlayerCount();
-                redis.setPlayerCount(playerCount);
-                MultiProxySync.setPlayerCount(playerCount);
-
+                plugin.getLogger().debug("playerJoin: Player count update publish");
+                syncPlayerCount();
+                redis.publishPlayerCountUpdate();
             } else {
                 plugin.getLogger().warn("Player count increase failed");
                 plugin.getLogger().warn("Perhaps the server crashed before? This might have caused Redis's TTL to not have expired yet?");
@@ -93,14 +95,9 @@ public class Manage {
             long status = redis.remPlayer(uuid);
 
             if (status == 1) {
-                plugin.getLogger().debug("Player count -1");
-
-                playerCount -= 1;
-                playerCount = getAllServerPlayerCount();
-                System.out.println("SetCount: " + playerCount);
-                redis.setPlayerCount(playerCount);
-                MultiProxySync.setPlayerCount(playerCount);
-
+                plugin.getLogger().debug("playerLeave: Player count update publish");
+                syncPlayerCount();
+                redis.publishPlayerCountUpdate();
             } else {
                 plugin.getLogger().warn("Player count reduction failure");
                 plugin.getLogger().warn("Perhaps it's because the server experienced lag times exceeding 20 seconds?");

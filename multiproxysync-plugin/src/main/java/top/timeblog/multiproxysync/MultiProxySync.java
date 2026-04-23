@@ -40,7 +40,7 @@ public class MultiProxySync {
     private final RedisManager redis;
     private final MultiProxySyncAPI api;
 
-    public static int playerCount = 0;
+    public static volatile int playerCount = 0;
     public static String ServerName;
 
     private Manage core;
@@ -108,6 +108,13 @@ public class MultiProxySync {
 
         MultiProxySyncProvider.register(this.api);
         core = new Manage(this, redis);
+        redis.startPlayerCountSubscriber(logger, () -> {
+            try {
+                core.refreshLocalPlayerCount();
+            } catch (Exception e) {
+                logger.warn("Failed to sync player count from pub/sub", e);
+            }
+        });
         ready = true;
 
         logger.info("MultiProxySync API initialized.");
@@ -145,6 +152,13 @@ public class MultiProxySync {
             logger.warn("Redis cleanup failed.", e);
         }
 
+        try {
+            redis.publishPlayerCountUpdate();
+        } catch (Exception e) {
+            logger.warn("Failed to publish player count update on shutdown.", e);
+        }
+
+        redis.stopSubscriber();
         redis.close();
     }
 }
