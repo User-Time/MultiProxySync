@@ -35,6 +35,7 @@
       <groupId>io.github.miniplaceholders</groupId>
       <artifactId>miniplaceholders-api</artifactId>
       <version>3.0.1</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
