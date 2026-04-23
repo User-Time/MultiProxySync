@@ -17,7 +17,7 @@ public class PlaceholderRegistry {
         this.expansion = Expansion.builder("multiproxysync")
                 .globalPlaceholder("global_player_count", (ctx, queue) ->
                         Tag.selfClosingInserting(
-                                Component.text(plugin.getCore().getAllServerPlayerCount())
+                                Component.text(MultiProxySync.getPlayerCount())
                         )
                 )
                 .build();
