@@ -1,36 +1,76 @@
 # MultiProxySync
-![GitHub release](https://img.shields.io/github/v/release/User-Time/MultiProxySync)
-![Maven Central](https://img.shields.io/maven-central/v/top.time-blog/multiproxysync-api)
-![GitHub downloads](https://img.shields.io/github/downloads/User-Time/MultiProxySync/total)
-![License](https://img.shields.io/github/license/User-Time/MultiProxySync)
-![Velocity](https://img.shields.io/badge/Velocity-3.x-blue)
-![Redis](https://img.shields.io/badge/Redis-required-red)
-![Java](https://img.shields.io/badge/Java-21-orange)
+
+![GitHub release](https://img.shields.io/github/v/release/User-Time/MultiProxySync?logo=github)
+![Maven Central](https://img.shields.io/maven-central/v/top.time-blog/multiproxysync-api?logo=maven-central)
+![License](https://img.shields.io/github/license/User-Time/MultiProxySync?logo=license)
+![Velocity](https://img.shields.io/badge/Velocity-3.X-blue?logo=Velocity)
+![Redis](https://img.shields.io/badge/Redis-required-red?logo=redis)
+[![Modrinth](https://img.shields.io/badge/Modrinth-MultiProxySync-00AF5C?style=flat-square&logo=modrinth)](https://modrinth.com/plugin/multiproxysync)
+[![Modrinth](https://img.shields.io/badge/MineBBS-MultiProxySync-8ab1ec?style=flat-square&logo=minebbs)](https://www.minebbs.com/resources/multiproxysync-velocity.15712/)
 
 [**English**](https://github.com/User-Time/MultiProxySync) | [**中文**](https://github.com/User-Time/MultiProxySync/blob/master/Readme_zhCN.md)
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/User-Time/MultiProxySync/refs/heads/master/assets/banner2.png" alt="MultiProxySync Banner"/>
+</p>
+
 ---
 
-**MultiProxySync** 是一个专为分布式 Velocity 代理网络设计的高性能插件。它通过 Redis 在多个 Velocity 代理之间同步在线玩家人数与玩家列表，从而确保整个网络中的数据表现始终一致。
+**MultiProxySync** 是一个面向分布式 Velocity 代理网络的插件。  
+它通过 **Redis** 在多个 Velocity 代理之间同步玩家人数与玩家列表，让整个网络在所有入口点上都能显示一致的全局在线信息。
 
-### 🌟 核心特性
+从 **2.2.0** 开始，插件在原有 Redis 数据同步基础上加入了 **Pub/Sub 实时更新机制**，当玩家进入、离开，或代理下线时，其他代理能够更快刷新本地在线人数缓存。
 
-* **全局同步**：在所有代理节点之间统一在线人数与玩家列表。
-* **自愈能力**：通过 Redis TTL 自动清理异常宕机节点遗留的数据。
-* **高性能**：基于 Redis Set 进行同步，具有优秀的性能表现。
-* **零配置 Ping 同步**：自动接管 `ProxyPingEvent`，准确显示全网总在线人数。
-* **公共 API**：向其他插件开放同步后的玩家与代理数据。
-* **Maven 支持**：API 可通过 Maven Central 正常引入，无需手动安装本地 JAR。
+---
+
+## ✨ 特性
+
+- **全局同步**  
+  在所有 Velocity 代理节点之间同步玩家人数与玩家列表。
+
+- **Pub/Sub 实时刷新**  
+  当玩家加入、离开或代理关闭时，通过 Redis Pub/Sub 通知其他代理快速刷新本地人数缓存。
+
+- **更准确的在线人数**  
+  自动接管 `ProxyPingEvent`，让服务器列表中显示的在线人数更接近全网真实总人数。
+
+- **自愈清理**  
+  通过 Redis TTL 自动清理宕机或异常掉线代理遗留的过期数据。
+
+- **Redis 驱动**  
+  基于 Redis Set 与 Pub/Sub 进行轻量同步，结构简单，性能稳定。
+
+- **公共 API**  
+  为其他插件提供只读 API，可获取全局代理与玩家同步数据。
+
+- **MiniPlaceholders 支持**  
+  检测到 `MiniPlaceholders` 后会自动注册占位符，可用于显示全局在线人数。
+
+- **Maven Central**  
+  公共 API 可直接通过 Maven Central 引入，无需手动安装本地 JAR。
+
+---
+
+## 📦 运行要求
+
+- **Velocity** 代理服务器
+- **Redis** 数据库
 
 ---
 
 ## 🛠️ 安装
 
 1. 确保你已经部署并运行了一个 **Redis** 服务器。
-2. 将 `multiproxysync-plugin-2.0.0.jar` 放入所有 Velocity 代理的 `plugins` 文件夹中。
-3. 启动代理服务器一次以生成 `config.yml`。
-4. 在 `plugins/multiproxysync/config.yml` 中填写 Redis 连接信息。
-5. 重启所有代理实例。
+2. 下载 `multiproxysync-plugin-2.2.0.jar`。
+3. 将其放入所有 Velocity 代理实例的 `plugins` 文件夹中。
+4. 首次启动每个代理以生成配置文件。
+5. 编辑生成的 `config.yml`。
+6. 重启所有代理实例。
+
+### 可选依赖
+
+- **MiniPlaceholders**  
+  若服务器安装了 MiniPlaceholders，MultiProxySync 会自动启用占位符支持。
 
 ---
 
@@ -49,32 +89,51 @@ redis:
 
 ### 配置说明
 
-* `serverName` 必须在每个代理节点中保持唯一。
-* `enabled` 用于控制插件是否初始化并注册 API。
-* 所有代理节点都应连接到同一个 Redis 实例。
+- `serverName` 必须在每个代理节点中保持唯一。
+- `enabled` 用于控制插件是否初始化并注册 API。
+- 所有代理节点都应连接到同一个 Redis 实例。
 
 ---
 
-## 📦 Maven 依赖
+## 🔤 占位符
 
-公共 API 已发布到 Maven Central，可通过以下方式引入：
+如果安装了 **MiniPlaceholders**，插件会自动注册以下占位符：
+
+```text
+<multiproxysync_global_player_count>
+```
+
+### 说明
+
+- 该占位符返回当前代理缓存的全网在线人数。
+- 人数会通过 Redis Pub/Sub 与心跳同步机制自动刷新。
+- 若未安装 MiniPlaceholders，则不会注册占位符支持。
+
+---
+
+## 📦 API
+
+<details>
+<summary>点击展开</summary>
+
+### Maven
 
 ```xml
 <dependency>
     <groupId>top.time-blog</groupId>
     <artifactId>multiproxysync-api</artifactId>
-    <version>2.0.0</version>
+    <version>2.2.0</version>
     <scope>provided</scope>
 </dependency>
 ```
 
----
+### Gradle
 
-## 🔌 API
-
-MultiProxySync 为其他 Velocity 插件提供了公共 API。
-
-通过该 API，外部插件可以访问所有代理之间已同步的玩家数据。
+```kotlin
+dependencies {
+    compileOnly("top.time-blog:multiproxysync-api:2.2.0")
+}
+```
 
 ### 可用方法
 
@@ -86,26 +145,7 @@ int getAllPlayerCount();
 Map<String, Integer> getPlayerCountByProxy();
 ```
 
-### 方法说明
-
-* `getProxies()`  
-  返回当前系统中已跟踪的所有代理名称。
-
-* `getAllPlayers()`  
-  返回全网所有在线玩家的 UUID 字符串集合。
-
-* `getPlayersByProxy()`  
-  按代理分组返回在线玩家的 UUID 字符串。
-
-* `getAllPlayerCount()`  
-  返回整个代理网络中同步后的总在线人数。
-
-* `getPlayerCountByProxy()`  
-  按代理返回对应的在线人数统计。
-
----
-
-## 🧩 使用示例
+### 使用示例
 
 ```java
 import top.timeblog.multiproxysync.api.MultiProxySyncAPI;
@@ -128,29 +168,25 @@ System.out.println("Count by proxy: " + countByProxy);
 System.out.println("Players by proxy: " + playersByProxy);
 ```
 
-### API 可用性
+### API 说明
 
-使用 `MultiProxySyncProvider.getOrNull()` 获取 API。
+- API 为只读接口。
+- Redis 连接与同步逻辑由 MultiProxySync 内部负责。
+- 返回的玩家标识为 UUID 字符串，而不是玩家名称。
+- API 会在插件初始化完成后可用。
 
-如果返回值不为 `null`，则说明 API 已可用并可直接调用。
-
----
-
-## 📝 说明
-
-* 该 API 为只读接口。
-* Redis 连接管理仍由 MultiProxySync 内部负责。
-* 返回的玩家标识为 UUID 字符串，而不是玩家名。
-* API 会在插件完成初始化后可用。
+</details>
 
 ---
 
-## 🔗 关于作者
+## 💡 反馈与支持
 
-* **Author**: Time
-* **Website**: [www.time-blog.top](https://www.time-blog.top)
-* **GitHub**: [MultiProxySync 项目主页](https://github.com/User-Time/MultiProxySync)
+如果你在使用过程中遇到问题，或有新的建议，欢迎提交 Issue：
 
-### 📝 开源协议
+👉 https://github.com/User-Time/MultiProxySync/issues
 
-本项目基于 **Apache-2.0 License** 开源。
+---
+
+## 📝 开源协议
+
+本项目基于 **Apache License 2.0** 开源。
