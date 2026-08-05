@@ -1,4 +1,4 @@
 # 项目排除路径
-/target/
+target/
 .idea
-MultiProxySync.iml
+*.iml

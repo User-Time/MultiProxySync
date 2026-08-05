@@ -25,7 +25,7 @@ import java.nio.file.Path;
 @Plugin(
         id = "multiproxysync",
         name = "MultiProxySync",
-        version = "2.0.0",
+        version = "2.2.0",
         url = "https://www.time-blog.top",
         authors = {"Time"},
         dependencies = {
