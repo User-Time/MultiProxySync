@@ -3,7 +3,7 @@
 ![GitHub release](https://img.shields.io/github/v/release/User-Time/MultiProxySync?logo=github)
 ![Maven Central](https://img.shields.io/maven-central/v/net.time-cloud/multiproxysync-api?logo=maven-central)
 ![License](https://img.shields.io/github/license/User-Time/MultiProxySync?logo=license)
-![Velocity](https://img.shields.io/badge/Velocity-3.X+-blue?logo=Velocity)
+![Velocity](https://img.shields.io/badge/Velocity-3.0+-blue?logo=Velocity)
 ![Redis](https://img.shields.io/badge/Redis-required-red?logo=redis)
 [![Modrinth](https://img.shields.io/badge/Modrinth-MultiProxySync-00AF5C?style=flat-square\&logo=modrinth)](https://modrinth.com/plugin/multiproxysync)
 [![MineBBS](https://img.shields.io/badge/MineBBS-MultiProxySync-8ab1ec?style=flat-square\&logo=minebbs)](https://www.minebbs.com/resources/multiproxysync-velocity.15712/)
