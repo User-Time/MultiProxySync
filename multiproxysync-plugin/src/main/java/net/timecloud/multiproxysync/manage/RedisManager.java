@@ -8,13 +8,13 @@ import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.params.SetParams;
 import net.timecloud.multiproxysync.MultiProxySync;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class RedisManager {
     private static JedisPool pool;
     public static final String PLAYER_COUNT_CHANNEL = "multiproxysync:player-count:update";
+    private static final String PROXY_LIST_KEY = "multiproxysync:proxyList";
+    private static final long PROXY_HEARTBEAT_TIMEOUT_MILLIS = 30_000L;
 
     private Thread subscriberThread;
     private JedisPubSub subscriber;
@@ -39,6 +39,17 @@ public class RedisManager {
             }
         }
     }
+    /***
+     * 获取 Redis 时间
+     */
+    private long getRedisTimeMillis(Jedis rs) {
+        List<String> time = rs.time();
+
+        long seconds = Long.parseLong(time.get(0));
+        long microseconds = Long.parseLong(time.get(1));
+
+        return seconds * 1_000L + microseconds / 1_000L;
+    }
 
     public void connect(String host, int port, String password) {
         pool = new JedisPool(
@@ -51,10 +62,47 @@ public class RedisManager {
         System.out.println("Run connect fun!");
     }
 
+    /**
+     * 初始化
+     */
     public void init() {
         try (Jedis rs = get()){
-            rs.sadd("serverList", MultiProxySync.ServerName);
+            writeProxyHeartbeat(rs);
             rs.set("playerCount", "0", SetParams.setParams().nx());
+        }
+    }
+
+    /**
+     * 更新当前 Proxy 的心跳
+     * <p>同时清理超过 30 秒未更新的 Proxy 服务器</p>
+     */
+    public void updateProxyHeartbeat() {
+        try (Jedis rs = get()) {
+            writeProxyHeartbeat(rs);
+        }
+    }
+
+    /**
+     * 使用指定的 Redis 连接写入当前 Proxy 的心跳。
+     */
+    private void writeProxyHeartbeat(Jedis rs) {
+        long now = getRedisTimeMillis(rs);
+
+        // 更新时间戳，并删除超过 30 秒未发送心跳的 Proxy
+        rs.zadd(PROXY_LIST_KEY, now, MultiProxySync.ServerName);
+        rs.zremrangeByScore(
+                PROXY_LIST_KEY,
+                0,
+                now - PROXY_HEARTBEAT_TIMEOUT_MILLIS
+        );
+    }
+
+    /**
+     * 从活跃服务器列表中移除当前 代理服务器。
+     */
+    public void removeProxy() {
+        try (Jedis rs = get()) {
+            rs.zrem(PROXY_LIST_KEY, MultiProxySync.ServerName);
         }
     }
 
@@ -73,10 +121,22 @@ public class RedisManager {
             return status;
         }
     }
-
+    /**
+     * 获取所有在线服务器
+     */
     public Set<String> getAllServers() {
         try (Jedis rs = get()){
-            return rs.smembers("serverList");
+            long activeSince = getRedisTimeMillis(rs) - PROXY_HEARTBEAT_TIMEOUT_MILLIS;
+            return new LinkedHashSet<>(
+                    rs.zrangeByScore(PROXY_LIST_KEY, activeSince, Double.POSITIVE_INFINITY)
+            );
+        }
+    }
+
+    public long getActiveProxyCount() {
+        try (Jedis rs = get()) {
+            long activeSince = getRedisTimeMillis(rs) - PROXY_HEARTBEAT_TIMEOUT_MILLIS;
+            return rs.zcount(PROXY_LIST_KEY, activeSince, Double.POSITIVE_INFINITY);
         }
     }
 

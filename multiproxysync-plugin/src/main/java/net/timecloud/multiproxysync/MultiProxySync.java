@@ -9,6 +9,7 @@ import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import org.bstats.charts.SimplePie;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 import net.timecloud.multiproxysync.api.MultiProxySyncAPI;
@@ -94,8 +95,7 @@ public class MultiProxySync {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        metricsFactory.make(this, BSTATS_PLUGIN_ID);;
-
+        Metrics metrics = metricsFactory.make(this, BSTATS_PLUGIN_ID);;
 
         logger.info("Starting MultiProxySync initialization...");
 
@@ -146,6 +146,25 @@ public class MultiProxySync {
 
 
         logger.info("Plugin started successfully!");
+
+        metrics.addCustomChart(new SimplePie(
+                "proxy_network_size",
+                () -> {
+                    try {
+                        long count = redis.getActiveProxyCount();
+
+                        if (count <= 0) return null;
+                        if (count == 1) return "1";
+                        if (count == 2) return "2";
+                        if (count == 3) return "3";
+                        if (count <= 5) return "4-5";
+                        if (count <= 10) return "6-10";
+                        return "11+";
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+        ));
     }
 
     @Subscribe
@@ -156,9 +175,13 @@ public class MultiProxySync {
 
         MultiProxySyncProvider.unregister();
 
-        try (redis.clients.jedis.Jedis rs = redis.get()) {
-            rs.srem("serverList", ServerName);
-            rs.del(ServerName + ":PlayerList");
+        try {
+            // 主动关闭心跳, 防止关闭后的一瞬间发送导致延迟30s
+            core.stopHeartbeat();
+            redis.removeProxy();
+            try (redis.clients.jedis.Jedis rs = redis.get()) {
+                rs.del(ServerName + ":PlayerList");
+            }
         } catch (Exception e) {
             logger.warn("Redis cleanup failed.", e);
         }

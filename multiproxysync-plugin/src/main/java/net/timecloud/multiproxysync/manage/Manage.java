@@ -1,6 +1,7 @@
 package net.timecloud.multiproxysync.manage;
 
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.scheduler.ScheduledTask;
 import net.timecloud.multiproxysync.MultiProxySync;
 
 import java.util.Collection;
@@ -13,6 +14,8 @@ public class Manage {
 
     private final MultiProxySync plugin;
     private final RedisManager redis;
+    private ScheduledTask heartbeatTask;
+
 
     public Manage(MultiProxySync server, RedisManager redis) {
         this.plugin = server;
@@ -26,15 +29,14 @@ public class Manage {
         redis.updatePlayerList(getAllPlayer());
     }
 
+
     private void startHeartbeat() {
-        plugin.getServer().getScheduler()
+        heartbeatTask = plugin.getServer().getScheduler()
                 .buildTask(plugin, () -> {
                     try {
+                        redis.updateProxyHeartbeat();
                         updatePlayerList();
-
-                        // 每次更新服务器心跳，TTL = 30s
                         syncPlayerCount();
-
                     } catch (Exception e) {
                         plugin.getLogger().warn("Failed to update server", e);
                     }
@@ -42,6 +44,13 @@ public class Manage {
                 .repeat(10, java.util.concurrent.TimeUnit.SECONDS) // 每10s执行一次
                 .schedule();
     }
+    public void stopHeartbeat() {
+        if (heartbeatTask != null) {
+            heartbeatTask.cancel();
+            heartbeatTask = null;
+        }
+    }
+
     public synchronized void syncPlayerCount() {
         int count = getAllServerPlayerCount();
         MultiProxySync.setPlayerCount(count);
