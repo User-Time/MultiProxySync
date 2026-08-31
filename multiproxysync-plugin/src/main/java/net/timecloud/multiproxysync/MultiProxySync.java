@@ -150,7 +150,7 @@ public class MultiProxySync {
         startUpdateCheck();
 
         metrics.addCustomChart(new SimplePie(
-                "proxy_network_size",
+                "proxyNetworkSize",
                 () -> {
                     try {
                         long count = redis.getActiveProxyCount();
