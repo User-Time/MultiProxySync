@@ -1,7 +1,7 @@
 # MultiProxySync
 
 ![GitHub release](https://img.shields.io/github/v/release/User-Time/MultiProxySync?logo=github)
-![Maven Central](https://img.shields.io/maven-central/v/top.time-blog/multiproxysync-api?logo=maven-central)
+![Maven Central](https://img.shields.io/maven-central/v/net.time-cloud/multiproxysync-api?logo=maven-central)
 ![License](https://img.shields.io/github/license/User-Time/MultiProxySync?logo=license)
 ![Velocity](https://img.shields.io/badge/Velocity-3.X-blue?logo=Velocity)
 ![Redis](https://img.shields.io/badge/Redis-required-red?logo=redis)
@@ -61,7 +61,7 @@
 ## 🛠️ 安装
 
 1. 确保你已经部署并运行了一个 **Redis** 服务器。
-2. 下载 `multiproxysync-plugin-2.2.0.jar`。
+2. 下载 `multiproxysync-plugin-2.3.0.jar`。
 3. 将其放入所有 Velocity 代理实例的 `plugins` 文件夹中。
 4. 首次启动每个代理以生成配置文件。
 5. 编辑生成的 `config.yml`。
@@ -120,9 +120,9 @@ redis:
 
 ```xml
 <dependency>
-    <groupId>top.time-blog</groupId>
+    <groupId>net.time-cloud</groupId>
     <artifactId>multiproxysync-api</artifactId>
-    <version>2.2.0</version>
+    <version>2.3.0</version>
     <scope>provided</scope>
 </dependency>
 ```
@@ -131,7 +131,7 @@ redis:
 
 ```kotlin
 dependencies {
-    compileOnly("top.time-blog:multiproxysync-api:2.2.0")
+    compileOnly("net.time-cloud:multiproxysync-api:2.3.0")
 }
 ```
 
@@ -148,8 +148,8 @@ Map<String, Integer> getPlayerCountByProxy();
 ### 使用示例
 
 ```java
-import top.timeblog.multiproxysync.api.MultiProxySyncAPI;
-import top.timeblog.multiproxysync.api.MultiProxySyncProvider;
+import net.timecloud.multiproxysync.api.MultiProxySyncAPI;
+import net.timecloud.multiproxysync.api.MultiProxySyncProvider;
 
 MultiProxySyncAPI api = MultiProxySyncProvider.getOrNull();
 if (api == null) {

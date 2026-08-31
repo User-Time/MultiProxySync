@@ -6,9 +6,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>top.time-blog</groupId>
+    <groupId>net.time-cloud</groupId>
     <artifactId>multiproxysync-parent</artifactId>
-    <version>2.2.0</version>
+    <version>2.3.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -26,7 +26,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>top.time-blog</groupId>
+      <groupId>net.time-cloud</groupId>
       <artifactId>multiproxysync-api</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -85,7 +85,7 @@
               <relocations>
                 <relocation>
                   <pattern>org.bstats</pattern>
-                  <shadedPattern>top.timeblog.multiproxysync.libs.bstats</shadedPattern>
+                  <shadedPattern>net.timecloud.multiproxysync.libs.bstats</shadedPattern>
                 </relocation>
               </relocations>
               <createDependencyReducedPom>false</createDependencyReducedPom>

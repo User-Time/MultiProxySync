@@ -1,32 +1,33 @@
-package top.timeblog.multiproxysync;
+package net.timecloud.multiproxysync;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Dependency;
+
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
-import top.timeblog.multiproxysync.api.MultiProxySyncAPI;
-import top.timeblog.multiproxysync.api.MultiProxySyncProvider;
-import top.timeblog.multiproxysync.config.ConfigManager;
-import top.timeblog.multiproxysync.impl.MultiProxySyncAPIImpl;
-import top.timeblog.multiproxysync.listener.PingListener;
-import top.timeblog.multiproxysync.listener.PlayerConnectProxyListener;
-import top.timeblog.multiproxysync.listener.PlayerDisconnectProxyListener;
-import top.timeblog.multiproxysync.manage.Manage;
-import top.timeblog.multiproxysync.manage.RedisManager;
-import top.timeblog.multiproxysync.placeholder.PlaceholderRegistry;
+import net.timecloud.multiproxysync.api.MultiProxySyncAPI;
+import net.timecloud.multiproxysync.api.MultiProxySyncProvider;
+import net.timecloud.multiproxysync.config.ConfigManager;
+import net.timecloud.multiproxysync.impl.MultiProxySyncAPIImpl;
+import net.timecloud.multiproxysync.listener.PingListener;
+import net.timecloud.multiproxysync.listener.PlayerConnectProxyListener;
+import net.timecloud.multiproxysync.listener.PlayerDisconnectProxyListener;
+import net.timecloud.multiproxysync.manage.Manage;
+import net.timecloud.multiproxysync.manage.RedisManager;
+import net.timecloud.multiproxysync.placeholder.PlaceholderRegistry;
 
 import java.nio.file.Path;
 
 @Plugin(
         id = "multiproxysync",
         name = "MultiProxySync",
-        version = "2.2.0",
+        version = "2.3.0",
         url = "https://github.com/User-Time/MultiProxySync",
         authors = {"Time"},
         dependencies = {
@@ -35,7 +36,6 @@ import java.nio.file.Path;
 )
 public class MultiProxySync {
     private static final int BSTATS_PLUGIN_ID = 33753;
-
     private final Metrics.Factory metricsFactory;
     private final ProxyServer server;
     private final Logger logger;
@@ -96,6 +96,7 @@ public class MultiProxySync {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         metricsFactory.make(this, BSTATS_PLUGIN_ID);;
 
+
         logger.info("Starting MultiProxySync initialization...");
 
         config = new ConfigManager(dataDirectory, "config.yml");
@@ -142,6 +143,7 @@ public class MultiProxySync {
         server.getEventManager().register(this, new PlayerConnectProxyListener(this, core));
         server.getEventManager().register(this, new PlayerDisconnectProxyListener(this, core));
         server.getEventManager().register(this, new PingListener(this));
+
 
         logger.info("Plugin started successfully!");
     }

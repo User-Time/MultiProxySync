@@ -1,14 +1,14 @@
-package top.timeblog.multiproxysync.impl;
+package net.timecloud.multiproxysync.impl;
 
-import top.timeblog.multiproxysync.api.MultiProxySyncAPI;
-import top.timeblog.multiproxysync.manage.RedisManager;
+import net.timecloud.multiproxysync.api.MultiProxySyncAPI;
+import net.timecloud.multiproxysync.manage.RedisManager;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static top.timeblog.multiproxysync.MultiProxySync.getPlayerCount;
+import static net.timecloud.multiproxysync.MultiProxySync.getPlayerCount;
 
 public class MultiProxySyncAPIImpl implements MultiProxySyncAPI {
 

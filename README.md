@@ -1,7 +1,7 @@
 # MultiProxySync
 
 ![GitHub release](https://img.shields.io/github/v/release/User-Time/MultiProxySync?logo=github)
-![Maven Central](https://img.shields.io/maven-central/v/top.time-blog/multiproxysync-api?logo=maven-central)
+![Maven Central](https://img.shields.io/maven-central/v/net.time-cloud/multiproxysync-api?logo=maven-central)
 ![License](https://img.shields.io/github/license/User-Time/MultiProxySync?logo=license)
 ![Velocity](https://img.shields.io/badge/Velocity-3.X-blue?logo=Velocity)
 ![Redis](https://img.shields.io/badge/Redis-required-red?logo=redis)
@@ -62,7 +62,7 @@ Starting from **v2.2.0**, MultiProxySync also supports **Redis Pub/Sub-based syn
 ## 🛠️ Installation
 
 1. Make sure a **Redis** server is available.
-2. Download `multiproxysync-plugin-2.2.0.jar`.
+2. Download `multiproxysync-plugin-2.3.0.jar`.
 3. Place it in the `plugins` folder of all Velocity proxy instances.
 4. Start each proxy once to generate the configuration file.
 5. Edit the generated `config.yml`.
@@ -124,9 +124,9 @@ Global online: <multiproxysync_global_player_count>
 
 ```xml
 <dependency>
-    <groupId>top.time-blog</groupId>
+    <groupId>net.time-cloud</groupId>
     <artifactId>multiproxysync-api</artifactId>
-    <version>2.2.0</version>
+    <version>2.3.0</version>
     <scope>provided</scope>
 </dependency>
 ```
@@ -135,7 +135,7 @@ Global online: <multiproxysync_global_player_count>
 
 ```kotlin
 dependencies {
-    compileOnly("top.time-blog:multiproxysync-api:2.2.0")
+    compileOnly("net.time-cloud:multiproxysync-api:2.3.0")
 }
 ```
 
@@ -152,8 +152,8 @@ Map<String, Integer> getPlayerCountByProxy();
 ### Usage Example
 
 ```java
-import top.timeblog.multiproxysync.api.MultiProxySyncAPI;
-import top.timeblog.multiproxysync.api.MultiProxySyncProvider;
+import net.timecloud.multiproxysync.api.MultiProxySyncAPI;
+import net.timecloud.multiproxysync.api.MultiProxySyncProvider;
 
 MultiProxySyncAPI api = MultiProxySyncProvider.getOrNull();
 if (api == null) {

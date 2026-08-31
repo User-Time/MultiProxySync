@@ -1,4 +1,4 @@
-package top.timeblog.multiproxysync.config;
+package net.timecloud.multiproxysync.config;
 
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurationNode;

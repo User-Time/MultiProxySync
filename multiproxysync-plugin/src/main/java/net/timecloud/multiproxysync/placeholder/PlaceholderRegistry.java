@@ -1,9 +1,9 @@
-package top.timeblog.multiproxysync.placeholder;
+package net.timecloud.multiproxysync.placeholder;
 
 import io.github.miniplaceholders.api.Expansion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
-import top.timeblog.multiproxysync.MultiProxySync;
+import net.timecloud.multiproxysync.MultiProxySync;
 
 public class PlaceholderRegistry {
     private final MultiProxySync plugin;

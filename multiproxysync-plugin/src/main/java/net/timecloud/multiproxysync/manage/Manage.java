@@ -1,7 +1,7 @@
-package top.timeblog.multiproxysync.manage;
+package net.timecloud.multiproxysync.manage;
 
 import com.velocitypowered.api.proxy.Player;
-import top.timeblog.multiproxysync.MultiProxySync;
+import net.timecloud.multiproxysync.MultiProxySync;
 
 import java.util.Collection;
 import java.util.HashSet;

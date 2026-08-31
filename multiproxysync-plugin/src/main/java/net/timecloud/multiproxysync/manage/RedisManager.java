@@ -1,4 +1,4 @@
-package top.timeblog.multiproxysync.manage;
+package net.timecloud.multiproxysync.manage;
 import com.velocitypowered.api.proxy.Player;
 import org.slf4j.Logger;
 import redis.clients.jedis.Jedis;
@@ -6,7 +6,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.params.SetParams;
-import top.timeblog.multiproxysync.MultiProxySync;
+import net.timecloud.multiproxysync.MultiProxySync;
 
 import java.util.Collection;
 import java.util.Set;
