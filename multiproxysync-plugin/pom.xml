@@ -50,6 +50,12 @@
         <artifactId>jedis</artifactId>
         <version>5.2.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.bstats</groupId>
+      <artifactId>bstats-velocity</artifactId>
+      <version>3.2.1</version>
+      <scope>compile</scope>
+    </dependency>
 
   </dependencies>
 
@@ -76,12 +82,19 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <relocations>
+                <relocation>
+                  <pattern>org.bstats</pattern>
+                  <shadedPattern>top.timeblog.multiproxysync.libs.bstats</shadedPattern>
+                </relocation>
+              </relocations>
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <minimizeJar>false</minimizeJar>
             </configuration>
           </execution>
         </executions>
       </plugin>
+
 
     </plugins>
   </build>

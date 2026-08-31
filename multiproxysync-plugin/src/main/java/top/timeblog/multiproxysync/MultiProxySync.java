@@ -8,6 +8,7 @@ import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 import top.timeblog.multiproxysync.api.MultiProxySyncAPI;
 import top.timeblog.multiproxysync.api.MultiProxySyncProvider;
@@ -26,14 +27,16 @@ import java.nio.file.Path;
         id = "multiproxysync",
         name = "MultiProxySync",
         version = "2.2.0",
-        url = "https://www.time-blog.top",
+        url = "https://github.com/User-Time/MultiProxySync",
         authors = {"Time"},
         dependencies = {
                 @Dependency(id = "miniplaceholders", optional = true)
         }
 )
 public class MultiProxySync {
+    private static final int BSTATS_PLUGIN_ID = 33753;
 
+    private final Metrics.Factory metricsFactory;
     private final ProxyServer server;
     private final Logger logger;
     private final Path dataDirectory;
@@ -48,13 +51,17 @@ public class MultiProxySync {
     private ConfigManager config;
 
     @Inject
-    public MultiProxySync(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
+    public MultiProxySync(ProxyServer server,
+                          Logger logger,
+                          @DataDirectory Path dataDirectory,
+                          Metrics.Factory metricsFactory
+    ) {
         this.server = server;
         this.logger = logger;
         this.dataDirectory = dataDirectory;
-
         this.redis = new RedisManager();
         this.api = new MultiProxySyncAPIImpl(redis);
+        this.metricsFactory = metricsFactory;
     }
 
     public static int getPlayerCount() {
@@ -87,6 +94,8 @@ public class MultiProxySync {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        metricsFactory.make(this, BSTATS_PLUGIN_ID);;
+
         logger.info("Starting MultiProxySync initialization...");
 
         config = new ConfigManager(dataDirectory, "config.yml");
