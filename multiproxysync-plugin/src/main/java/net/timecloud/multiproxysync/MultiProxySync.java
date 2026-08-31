@@ -22,6 +22,7 @@ import net.timecloud.multiproxysync.listener.PlayerDisconnectProxyListener;
 import net.timecloud.multiproxysync.manage.Manage;
 import net.timecloud.multiproxysync.manage.RedisManager;
 import net.timecloud.multiproxysync.placeholder.PlaceholderRegistry;
+import net.timecloud.multiproxysync.update.UpdateChecker;
 
 import java.nio.file.Path;
 
@@ -146,6 +147,7 @@ public class MultiProxySync {
 
 
         logger.info("Plugin started successfully!");
+        startUpdateCheck();
 
         metrics.addCustomChart(new SimplePie(
                 "proxy_network_size",
@@ -165,6 +167,17 @@ public class MultiProxySync {
                     }
                 }
         ));
+    }
+
+    private void startUpdateCheck() {
+        String currentVersion = server.getPluginManager()
+                .fromInstance(this)
+                .flatMap(plugin -> plugin.getDescription().getVersion())
+                .orElse("unknown");
+
+        server.getScheduler()
+                .buildTask(this, () -> UpdateChecker.check(logger, currentVersion))
+                .schedule();
     }
 
     @Subscribe

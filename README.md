@@ -33,6 +33,7 @@ MultiProxySync combines periodic synchronization, Redis Pub/Sub updates, and pro
 * **Public API** — Provides read-only access to synchronized proxy and player data.
 * **MiniPlaceholders** — Optional placeholder support for the global online player count.
 * **bStats** — Provides anonymous usage metrics and proxy network size statistics.
+* **Update notifications** — Checks GitHub Releases at startup and logs when a newer version is available.
 
 ### Proxy Heartbeat
 

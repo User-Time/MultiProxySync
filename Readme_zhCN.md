@@ -33,6 +33,7 @@ MultiProxySync 结合周期同步、Redis Pub/Sub 实时更新和代理节点健
 * **公共 API** — 为其他插件提供只读的代理与玩家同步数据。
 * **MiniPlaceholders** — 可选的全局在线人数占位符支持。
 * **bStats** — 提供匿名使用统计及代理网络规模统计。
+* **更新提醒** — 启动时检查 GitHub Releases，并在发现新版本时输出日志提醒。
 
 ### 代理心跳
 
