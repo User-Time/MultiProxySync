@@ -18,7 +18,7 @@
 
 **MultiProxySync** 是一个面向分布式 Velocity 代理网络的插件。
 
-它通过 **Redis** 在多个 Velocity 代理之间同步玩家人数与玩家列表，使网络中的不同入口能够共享一致的全局在线人数和玩家状态。
+通过 **Redis** 在多个 Velocity 代理之间同步玩家人数与玩家列表，使不同代理服务器入口能够共享一致的全局在线人数和玩家状态。
 
 MultiProxySync 结合周期同步、Redis Pub/Sub 实时更新和代理节点健康检测，在代理重启、断开或异常崩溃时仍能保持同步数据准确。
 
@@ -26,22 +26,21 @@ MultiProxySync 结合周期同步、Redis Pub/Sub 实时更新和代理节点健
 
 ## ✨ 特性
 
-* **全局玩家同步** — 在多个 Velocity 代理之间同步玩家人数与玩家列表。
+* **多代理服玩家同步** — 在多个 Velocity 代理之间同步玩家人数与玩家列表。
 * **Redis Pub/Sub** — 玩家加入、离开或代理状态变化时快速通知其他节点刷新数据。
-* **代理健康检测** — 基于 Redis ZSET 心跳记录有效代理，并自动清理失效节点。
-* **统一在线人数** — 接管 `ProxyPingEvent`，在不同入口显示一致的全网在线人数。
+* **代理服状态检测** — 基于 Redis ZSET 心跳记录有效代理，并自动清理失效节点。
+* **统一在线人数** — 接管 `ProxyPingEvent`，在不同服务器入口显示一致的全网在线人数。
 * **公共 API** — 为其他插件提供只读的代理与玩家同步数据。
 * **MiniPlaceholders** — 可选的全局在线人数占位符支持。
 * **bStats** — 提供匿名使用统计及代理网络规模统计。
-* **Maven Central** — API 可直接通过 Maven Central 引入。
 
 ### 代理心跳
 
-代理启动后会立即注册，并每 **10 秒**刷新一次心跳。
+服务器启动后进行注册，
 
-超过 **30 秒**未更新的代理会被视为离线，并从有效代理列表中自动清理。
+超过 **30 秒**未更新的代理服会被视为离线，并从在线服务器列表中自动清理。
 
-心跳时间使用 **Redis 服务器时间**，避免不同代理服务器系统时钟存在偏差时影响节点状态判断。
+心跳时间戳使用 **Redis 服务器时间**，避免不同代理服务器系统时钟存在偏差时影响节点状态判断。
 
 ---
 
@@ -55,11 +54,11 @@ MultiProxySync 结合周期同步、Redis Pub/Sub 实时更新和代理节点健
 
 ## 🛠️ 安装
 
-1. 一个可用的 Redis 服务器。
+1. Redis
 2. 下载最新版 `multiproxysync-plugin`。
-3. 将插件放入所有 Velocity 代理的 `plugins` 目录。
+3. 将插件放入所有 Velocity 代理服务器的 `plugins` 目录。
 4. 启动代理并编辑生成的 `config.yml`。
-5. 确保所有代理连接到同一个 Redis 实例。
+5. 确保所有插件连接到同一个 Redis
 
 ---
 
@@ -126,15 +125,22 @@ dependencies {
 
 ### 可用方法
 
-```java
-Set<String> getProxies();
-Set<String> getAllPlayers();
-Map<String, Set<String>> getPlayersByProxy();
-int getAllPlayerCount();
-Map<String, Integer> getPlayerCountByProxy();
-```
+* `getProxies()`
+  获取当前所有有效的 Velocity 代理节点。
 
-`getProxies()` 及按代理统计的数据仅包含当前有效的代理节点。
+* `getAllPlayers()`
+  获取全网在线玩家 UUID 集合。
+
+* `getPlayersByProxy()`
+  获取各代理节点及其对应的在线玩家 UUID 集合。
+
+* `getAllPlayerCount()`
+  获取全网在线玩家总数。
+
+* `getPlayerCountByProxy()`
+  获取各代理服务器节点及其对应的在线玩家数量。
+
+> 代理相关数据仅包含当前心跳有效的节点，玩家标识均为 UUID 字符串。
 
 ### 使用示例
 
@@ -153,11 +159,7 @@ Map<String, Integer> countByProxy = api.getPlayerCountByProxy();
 ```
 
 ### API 说明
-
-* API 为只读接口。
 * 玩家标识使用 UUID 字符串。
-* Redis 连接和同步逻辑由 MultiProxySync 内部管理。
-* API 会在插件初始化完成后可用。
 
 </details>
 
@@ -172,26 +174,23 @@ top.time-blog  →  net.time-cloud
 top.timeblog   →  net.timecloud
 ```
 
-API 方法签名没有变化。
-
-使用 MultiProxySync API 的插件需要更新 Maven / Gradle 依赖坐标以及 Java `import` 路径。
-
 ---
 
-## 🗺️ 版本规划
+🗺️ 版本规划
 
-### 2.4.x
+MultiProxySync 后续将围绕不同的使用需求，分别维护现有版本并推进新版本开发。你可以根据自己的实际需求和偏好，自由选择适合自己的版本。
 
-**2.4.x 将是最后一个仅围绕玩家数据同步进行功能开发的版本系列。**
+2.3.0+：基础功能维护
 
-2.4.x 功能完成后，该版本线将进入维护阶段：
+2.3.0+ 将专注于玩家人数和玩家列表的同步功能，后续不再增加非必要功能，仅围绕现有功能进行维护、Bug 修复和稳定性改进。
 
-* 继续修复 Bug；
-* 不再增加新功能。
+如有必要，也可能通过小版本更新增加与基础同步功能直接相关的改进或修复。
 
-### 3.0.0+
+3.0.0+：功能拓展
 
-从 **3.0.0** 开始，MultiProxySync 将不再局限于玩家数据同步，并逐步扩展更多跨代理同步能力。
+从 3.0.0 开始，MultiProxySync 将在现有玩家同步功能的基础上进行后续功能拓展与开发。
+
+你可以根据自己的使用需求和心情，自由选择继续使用 2.3.0+，或尝试 3.0.0+ 及后续版本。
 
 ---
 
