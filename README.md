@@ -3,10 +3,10 @@
 ![GitHub release](https://img.shields.io/github/v/release/User-Time/MultiProxySync?logo=github)
 ![Maven Central](https://img.shields.io/maven-central/v/net.time-cloud/multiproxysync-api?logo=maven-central)
 ![License](https://img.shields.io/github/license/User-Time/MultiProxySync?logo=license)
-![Velocity](https://img.shields.io/badge/Velocity-3.X-blue?logo=Velocity)
+![Velocity](https://img.shields.io/badge/Velocity-3.X+-blue?logo=Velocity)
 ![Redis](https://img.shields.io/badge/Redis-required-red?logo=redis)
-[![Modrinth](https://img.shields.io/badge/Modrinth-MultiProxySync-00AF5C?style=flat-square&logo=modrinth)](https://modrinth.com/plugin/multiproxysync)
-[![Modrinth](https://img.shields.io/badge/MineBBS-MultiProxySync-8ab1ec?style=flat-square&logo=minebbs)](https://www.minebbs.com/resources/multiproxysync-velocity.15712/)
+[![Modrinth](https://img.shields.io/badge/Modrinth-MultiProxySync-00AF5C?style=flat-square\&logo=modrinth)](https://modrinth.com/plugin/multiproxysync)
+[![MineBBS](https://img.shields.io/badge/MineBBS-MultiProxySync-8ab1ec?style=flat-square\&logo=minebbs)](https://www.minebbs.com/resources/multiproxysync-velocity.15712/)
 
 [**English**](https://github.com/User-Time/MultiProxySync) | [**中文**](https://github.com/User-Time/MultiProxySync/blob/master/Readme_zhCN.md)
 
@@ -16,58 +16,49 @@
 
 ---
 
-**MultiProxySync** is a Velocity plugin for distributed proxy networks.  
-It uses **Redis** to synchronize player counts and player lists across multiple Velocity proxies, so your network can present a consistent global player count and shared player data across all entry points.
+MultiProxySync is a Velocity plugin for distributed proxy networks.
 
-Starting from **v2.2.0**, MultiProxySync also supports **Redis Pub/Sub-based synchronization** for faster cross-proxy count updates, and adds optional **MiniPlaceholders** support for displaying the global online count in other plugins.
+It uses Redis to synchronize player counts and player lists across multiple Velocity proxies, allowing all entry points in a network to share a consistent global online count and player state.
+
+MultiProxySync combines periodic synchronization with Redis Pub/Sub updates and automatic proxy health tracking to keep synchronized data accurate even when proxy nodes restart, disconnect, or crash unexpectedly.
 
 ---
 
 ## ✨ Features
 
-- **Global synchronization**  
-  Synchronizes player counts and player lists across multiple Velocity proxies.
+* **Global player synchronization** — Synchronizes player counts and player lists across Velocity proxies.
+* **Redis Pub/Sub** — Quickly propagates player count changes between proxy nodes.
+* **Proxy health tracking** — Uses Redis ZSET heartbeats and Redis server time to track active proxies and automatically remove stale nodes.
+* **Public API** — Provides read-only access to synchronized proxy and player data.
+* **MiniPlaceholders** — Optional global player count placeholder support.
+* **bStats** — Includes anonymous usage metrics and proxy network size statistics.
+* **Maven Central** — The API is published directly to Maven Central.
 
-- **Redis Pub/Sub updates**  
-  Publishes player count update messages when players join, leave, or when a proxy shuts down, allowing other proxies to refresh their local cached count faster.
+### Proxy Heartbeat
 
-- **Accurate player statistics**  
-  Keeps the displayed online count consistent across the network.
+Each proxy registers itself when starting and refreshes its heartbeat every **10 seconds**.
 
-- **Self-healing cleanup**  
-  Removes stale proxy data automatically when a node crashes or goes offline unexpectedly.
+Proxy nodes that have not updated for more than **30 seconds** are treated as offline and automatically removed from the active proxy list.
 
-- **Redis-powered**  
-  Uses Redis for fast and lightweight shared state synchronization.
-
-- **Public API**  
-  Exposes synchronized proxy and player data for use in other plugins.
-
-- **MiniPlaceholders support**  
-  Provides a placeholder for the global network player count when MiniPlaceholders is installed.
-
-- **Maven Central distribution**  
-  The API can be added through Maven Central without manually installing local JAR files.
+Heartbeat timestamps use **Redis server time**, avoiding inconsistencies caused by different proxy system clocks.
 
 ---
 
 ## 📦 Requirements
 
-- **Velocity** proxy server
-- **Redis** database
-- **MiniPlaceholders** *(optional, only required if you want placeholder support)*
+* Velocity 3.x+
+* Redis
+* MiniPlaceholders *(optional)*
 
 ---
 
 ## 🛠️ Installation
 
-1. Make sure a **Redis** server is available.
-2. Download `multiproxysync-plugin-2.3.0.jar`.
-3. Place it in the `plugins` folder of all Velocity proxy instances.
-4. Start each proxy once to generate the configuration file.
-5. Edit the generated `config.yml`.
-6. Restart all proxy instances.
-7. Install **MiniPlaceholders** as well if you want to use placeholder support.
+1. Prepare a Redis server.
+2. Download the latest `multiproxysync-plugin` release.
+3. Place it in the `plugins` directory of every Velocity proxy.
+4. Start the proxies and edit the generated `config.yml`.
+5. Make sure every proxy connects to the same Redis instance.
 
 ---
 
@@ -84,34 +75,25 @@ redis:
   password: YourPassword
 ```
 
-### Notes
-
-- `serverName` must be unique for each proxy node.
-- `enabled` controls whether the plugin initializes and registers its API.
-- All proxy nodes should connect to the same Redis instance.
-- Pub/Sub synchronization and cached count refresh both rely on all proxies sharing the same Redis server.
+* `serverName` must be unique for every proxy.
+* `enabled` controls whether MultiProxySync is initialized.
+* All proxies must use the same Redis instance.
 
 ---
 
-## 🔤 Placeholder
+## 🔤 MiniPlaceholders
 
-If **MiniPlaceholders** is installed, MultiProxySync registers the following global placeholder:
+When MiniPlaceholders is installed, MultiProxySync registers:
 
 ```text
 <multiproxysync_global_player_count>
 ```
 
-### Example
+Example:
 
 ```text
 Global online: <multiproxysync_global_player_count>
 ```
-
-### Notes
-
-- Placeholder support is optional.
-- The placeholder uses the plugin's synchronized cached global player count.
-- If MiniPlaceholders is not installed, placeholder registration is skipped automatically.
 
 ---
 
@@ -149,7 +131,9 @@ int getAllPlayerCount();
 Map<String, Integer> getPlayerCountByProxy();
 ```
 
-### Usage Example
+`getProxies()` and proxy-based statistics only include currently active proxy nodes.
+
+### Example
 
 ```java
 import net.timecloud.multiproxysync.api.MultiProxySyncAPI;
@@ -157,41 +141,65 @@ import net.timecloud.multiproxysync.api.MultiProxySyncProvider;
 
 MultiProxySyncAPI api = MultiProxySyncProvider.getOrNull();
 if (api == null) {
-    System.out.println("MultiProxySync API is not available yet.");
     return;
 }
 
 int totalPlayers = api.getAllPlayerCount();
-Set<String> allPlayers = api.getAllPlayers();
+Set<String> players = api.getAllPlayers();
 Map<String, Integer> countByProxy = api.getPlayerCountByProxy();
-Map<String, Set<String>> playersByProxy = api.getPlayersByProxy();
-
-System.out.println("Total players: " + totalPlayers);
-System.out.println("All players: " + allPlayers);
-System.out.println("Count by proxy: " + countByProxy);
-System.out.println("Players by proxy: " + playersByProxy);
 ```
 
-### API Notes
+### Notes
 
-- The API is read-only.
-- Redis connection management remains internal to MultiProxySync.
-- Returned player identifiers are UUID strings.
-- The API becomes available after plugin initialization has completed.
+* The API is read-only.
+* Player identifiers are UUID strings.
+* Redis connections are managed internally.
+* The API becomes available after MultiProxySync finishes initialization.
 
 </details>
 
 ---
 
+## ⚠️ API Migration
+
+Starting with **2.3.0**, the Maven Group ID and Java package have changed.
+
+```text
+top.time-blog  →  net.time-cloud
+top.timeblog   →  net.timecloud
+```
+
+The API method signatures remain unchanged.
+
+Plugins using the MultiProxySync API must update their dependency coordinates and Java imports.
+
+---
+
+## 🗺️ Version Roadmap
+
+### 2.4.x
+
+**2.4.x will be the final release line focused exclusively on player synchronization.**
+
+After the 2.4.x feature set is finalized, this branch will enter maintenance mode:
+
+* Bug fixes will continue.
+* No new features will be added.
+
+### 3.0.0+
+
+Starting with **3.0.0**, MultiProxySync will expand beyond player synchronization and introduce additional cross-proxy synchronization capabilities.
+
+---
 
 ## 💡 Feedback & Support
 
-If you encounter any issues or have ideas for improvements, feel free to open an issue:
+Issues and suggestions are welcome:
 
-👉 https://github.com/User-Time/MultiProxySync/issues
+https://github.com/User-Time/MultiProxySync/issues
 
 ---
 
 ## 📝 License
 
-This project is licensed under the **Apache License 2.0**.
+Licensed under the **Apache License 2.0**.
